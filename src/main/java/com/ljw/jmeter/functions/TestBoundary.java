@@ -1,4 +1,4 @@
-package com.ljw.jmeter.functiions;
+package com.ljw.jmeter.functions;
 
 import com.google.common.collect.Lists;
 import com.ljw.utils.TestFrame;
@@ -25,6 +25,8 @@ public class TestBoundary extends AbstractFunction {
     private CompoundVariable excelPath;
     private CompoundVariable sheetName;
 
+    public TestBoundary(){}
+
     @Override
     public List<String> getArgumentDesc() {
         return desc;
@@ -34,6 +36,7 @@ public class TestBoundary extends AbstractFunction {
         desc.add("excelPath");
         desc.add("sheetName");
     }
+
 
     @Override
     public String execute(SampleResult sampleResult, Sampler sampler) throws InvalidVariableException {
@@ -57,6 +60,6 @@ public class TestBoundary extends AbstractFunction {
 
     @Override
     public String getReferenceKey() {
-        return "__testBoundary";
+        return KEY;
     }
 }

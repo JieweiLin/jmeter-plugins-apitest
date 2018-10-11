@@ -61,4 +61,27 @@ public class StringOperateUtil {
         }
         return sb.toString();
     }
+
+    public static JSONObject getChangeJsonFromUniqueParams2(String uniqueParams, JSONObject paramsJson) {
+        String[] uniqueParamsList = uniqueParams.split("&");
+        if (!uniqueParams.equals("")){
+            for (int i = 0; i < uniqueParamsList.length; i++) {
+                String key = uniqueParamsList[i];
+                String initial = paramsJson.getString(key);
+                String newStr = getRandomStringV2(initial.length());
+                paramsJson.put(key, newStr);
+            }
+        }
+        return paramsJson;
+    }
+
+    public static String getStrFromJson(String s) {
+        JSONObject json = new JSONObject(s);
+        String result = "";
+        for (String key : json.keySet()) {
+            String val = json.getString(key);
+            result += key + "="+val + "&";
+        }
+        return result.substring(0, result.length()-1);
+    }
 }

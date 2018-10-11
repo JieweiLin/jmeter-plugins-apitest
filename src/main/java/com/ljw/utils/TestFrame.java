@@ -110,13 +110,13 @@ public class TestFrame {
         }
     }
 
-    private static void testBoundary(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String isNullable, String min, String max, String checkValue, String reportPath, String ifCheckBoundary) {
+    private static void testBoundary(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String isNullable, String min, String max, String checkValue, String reportPath, String ifCheckBoundary) throws IOException {
         if ("YES".equals(ifCheckBoundary) || "yes".equals(ifCheckBoundary)) {
             testBoundary(url, method, headers, params, uniqueParams, checkParam, fieldType, isNullable, min, max, checkValue, reportPath);
         }
     }
 
-    private static void testBoundary(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String isNullable, String mins, String maxs, String checkValue, String reportPath) {
+    private static void testBoundary(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String isNullable, String mins, String maxs, String checkValue, String reportPath) throws IOException {
         String minStr = "";
         String maxStr = "";
         String minStr1 = "";
@@ -174,6 +174,123 @@ public class TestFrame {
                 maxStr = StringOperateUtil.getRandomStringV2(max + 1);
             }
         }
+        if (!maxStr.equals("")){
+            paramsJson.put(checkParam, maxStr);
+            if (params.substring(0,1).equals("{")){
+                response = testApiByJson(url, method, headersJson, paramsJson);
+                saveParamStr = paramsJson.toString();
+            }else {
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
+                response = testApiByForm(url, method, headersJson, paramsJson);
+                saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+            }
+            if (response.contains(checkValue)){
+                result = "pass";
+            }else {
+                result = "failed";
+            }
+            List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最大边界"+max);
+            list.add(rowData);
+        }
+        if (!minStr1.equals("")){
+            paramsJson.put(checkParam, minStr1);
+            if (params.substring(0,1).equals("{")){
+                response = testApiByJson(url, method, headersJson, paramsJson);
+                saveParamStr = paramsJson.toString();
+            }else {
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
+                response = testApiByForm(url, method, headersJson, paramsJson);
+                saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+            }
+            if (!response.contains(checkValue)){
+                result = "pass";
+            }else {
+                result = "failed";
+            }
+            List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最小边界-1");
+            list.add(rowData);
+        }
+        if (!maxStr1.equals("")) {
+            paramsJson.put(checkParam, maxStr1);
+            if (params.substring(0, 1).equals("{")) {
+                response = testApiByJson(url, method, headersJson, paramsJson);
+                saveParamStr = paramsJson.toString();
+            } else {
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
+                response = testApiByForm(url, method, headersJson, paramsJson);
+                saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+            }
+            if (!response.contains(checkValue)) {
+                result = "pass";
+            } else {
+                result = "failed";
+            }
+            List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最大边界+1");
+            list.add(rowData);
+        }
+        if (mustStr.equals("yes"))
+        {
+            paramsJson.put(checkParam, "");
+            if (params.substring(0, 1).equals("{"))
+            {
+                response = testApiByJson(url, method, headersJson, paramsJson);
+                saveParamStr = paramsJson.toString();
+            }
+            else
+            {
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
+                response = testApiByForm(url, method, headersJson, paramsJson);
+                saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+            }
+            if (!response.contains(checkValue)) {
+                result = "pass";
+            } else {
+                result = "failed";
+            }
+            List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response,
+                    result, checkParam + "必填项校验");
 
+            list.add(rowData);
+        }
+        if (!minStr.equals(""))
+        {
+            paramsJson.put(checkParam, minStr);
+            if (params.substring(0, 1).equals("{"))
+            {
+                response = testApiByJson(url, method, headersJson, paramsJson);
+                saveParamStr = paramsJson.toString();
+            }
+            else
+            {
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
+                response = testApiByForm(url, method, headersJson, paramsJson);
+                saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+            }
+            if (response.contains(checkValue)) {
+                result = "pass";
+            } else {
+                result = "failed";
+            }
+            List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response,
+                    result, checkParam + "边界校验，最小边界" + min);
+
+            list.add(rowData);
+        }
+        String header = "url, method, headers, params, checkParam, checkValue, response, result, testName";
+        CommonMethod.writeList(reportPath, "test-report", header, list);
+    }
+
+    private static List<String> getRowData(String url, String method, String headers, String saveParamStr, String checkParam, String checkValue, String response, String result, String s) {
+        List<String> rowData = Lists.newArrayList();
+        rowData.add(url);
+        rowData.add(method);
+        rowData.add(headers);
+        rowData.add(saveParamStr);
+        rowData.add(checkParam);
+        rowData.add(checkValue);
+        rowData.add(response);
+        rowData.add(result);
+        rowData.add(s);
+        return rowData;
     }
 }
