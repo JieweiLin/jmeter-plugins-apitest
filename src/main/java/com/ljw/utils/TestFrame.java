@@ -293,4 +293,8 @@ public class TestFrame {
         rowData.add(s);
         return rowData;
     }
+
+    public static void testSpecialCharacters(String excelPath, String sheetName) {
+
+    }
 }
