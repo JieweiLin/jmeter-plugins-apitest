@@ -64,7 +64,7 @@ public class StringOperateUtil {
 
     public static JSONObject getChangeJsonFromUniqueParams2(String uniqueParams, JSONObject paramsJson) {
         String[] uniqueParamsList = uniqueParams.split("&");
-        if (!uniqueParams.equals("")){
+        if (!"".equals(uniqueParams)) {
             for (int i = 0; i < uniqueParamsList.length; i++) {
                 String key = uniqueParamsList[i];
                 String initial = paramsJson.getString(key);
@@ -96,7 +96,7 @@ public class StringOperateUtil {
 
     public static JSONObject getChangeJsonFromUniqueParams(String uniqueParam, JSONObject paramsJson) {
         String[] uniqueParamsList = uniqueParam.split("&");
-        if (!uniqueParam.equals("")) {
+        if (!"".equals(uniqueParam)) {
             for (int i = 0; i < uniqueParamsList.length; i++) {
                 String key = uniqueParamsList[i];
                 String initial = paramsJson.getString(key);

@@ -175,9 +175,9 @@ public class TestFrame {
                 maxStr = StringOperateUtil.getRandomStringV2(max + 1);
             }
         }
-        if (!maxStr.equals("")) {
+        if (!"".equals(maxStr)) {
             paramsJson.put(checkParam, maxStr);
-            if (params.substring(0, 1).equals("{")) {
+            if ("{".equals(params.substring(0, 1))) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
             } else {
@@ -193,9 +193,9 @@ public class TestFrame {
             List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最大边界" + max);
             list.add(rowData);
         }
-        if (!minStr1.equals("")) {
+        if (!"".equals(minStr1)) {
             paramsJson.put(checkParam, minStr1);
-            if (params.substring(0, 1).equals("{")) {
+            if ("{".equals(params.substring(0, 1))) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
             } else {
@@ -211,9 +211,9 @@ public class TestFrame {
             List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最小边界-1");
             list.add(rowData);
         }
-        if (!maxStr1.equals("")) {
+        if (!"".equals(maxStr1)) {
             paramsJson.put(checkParam, maxStr1);
-            if (params.substring(0, 1).equals("{")) {
+            if ("{".equals(params.substring(0, 1))) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
             } else {
@@ -229,9 +229,9 @@ public class TestFrame {
             List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最大边界+1");
             list.add(rowData);
         }
-        if (mustStr.equals("yes")) {
+        if ("yes".equals(mustStr)) {
             paramsJson.put(checkParam, "");
-            if (params.substring(0, 1).equals("{")) {
+            if ("{".equals(params.substring(0, 1))) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
             } else {
@@ -249,9 +249,9 @@ public class TestFrame {
 
             list.add(rowData);
         }
-        if (!minStr.equals("")) {
+        if (!"".equals(minStr)) {
             paramsJson.put(checkParam, minStr);
-            if (params.substring(0, 1).equals("{")) {
+            if ("{".equals(params.substring(0, 1))) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
             } else {
@@ -316,7 +316,7 @@ public class TestFrame {
     private static void testSpecialCharacters(String url, String method, String headers, String params, String uniqueParam, String checkParam, String fieldType, String isNullable, String checkValue, String specialList, String reportPath) throws IOException {
         String headersStr = StringOperateUtil.getJsonStr(headers);
         String paramsStr = "";
-        if (params.substring(0, 1).equals("{")) {
+        if ("{".equals(params.substring(0, 1))) {
             paramsStr = params;
         } else {
             paramsStr = StringOperateUtil.getJsonStr(params);
@@ -328,7 +328,7 @@ public class TestFrame {
         String temp = "";
         String saveParamStr = "";
         List<List<String>> list = Lists.newArrayList();
-        if (!specialList.equals("")) {
+        if (!"".equals(specialList)) {
             for (int i = 0; i < specialList.length(); i++) {
                 String item = String.valueOf(specialList.charAt(i));
                 JSONObject paramsJson = new JSONObject(paramsStr);
@@ -336,7 +336,7 @@ public class TestFrame {
                 temp = paramsJson.getString(checkParam);
 
                 paramsJson.put(checkParam, temp + item);
-                if (params.substring(0, 1).equals("{")) {
+                if ("{".equals(params.substring(0, 1))) {
                     response = testApiByJson(url, method, headersJson, paramsJson);
                     saveParamStr = paramsJson.toString();
                 } else {
@@ -357,7 +357,7 @@ public class TestFrame {
                 paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParam, paramsJson);
                 temp = paramsJson.getString(checkParam);
                 paramsJson.put(checkParam, temp + item);
-                if (params.substring(0, 1).equals("{")) {
+                if ("{".equals(params.substring(0, 1))) {
                     response = testApiByJson(url, method, headersJson, paramsJson);
                     saveParamStr = paramsJson.toString();
                 } else {
@@ -379,7 +379,7 @@ public class TestFrame {
                 paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParam, paramsJson);
                 temp = paramsJson.getString(checkParam);
                 paramsJson.put(checkParam, temp + item);
-                if (params.substring(0, 1).equals("{")) {
+                if ("{".equals(params.substring(0, 1))) {
                     response = testApiByJson(url, method, headersJson, paramsJson);
                     saveParamStr = paramsJson.toString();
                 } else {
