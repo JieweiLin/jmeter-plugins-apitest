@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author 林杰炜 linjiewei
@@ -174,37 +175,37 @@ public class TestFrame {
                 maxStr = StringOperateUtil.getRandomStringV2(max + 1);
             }
         }
-        if (!maxStr.equals("")){
+        if (!maxStr.equals("")) {
             paramsJson.put(checkParam, maxStr);
-            if (params.substring(0,1).equals("{")){
+            if (params.substring(0, 1).equals("{")) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
-            }else {
+            } else {
                 paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
                 response = testApiByForm(url, method, headersJson, paramsJson);
                 saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
             }
-            if (response.contains(checkValue)){
+            if (response.contains(checkValue)) {
                 result = "pass";
-            }else {
+            } else {
                 result = "failed";
             }
-            List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最大边界"+max);
+            List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最大边界" + max);
             list.add(rowData);
         }
-        if (!minStr1.equals("")){
+        if (!minStr1.equals("")) {
             paramsJson.put(checkParam, minStr1);
-            if (params.substring(0,1).equals("{")){
+            if (params.substring(0, 1).equals("{")) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
-            }else {
+            } else {
                 paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
                 response = testApiByForm(url, method, headersJson, paramsJson);
                 saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
             }
-            if (!response.contains(checkValue)){
+            if (!response.contains(checkValue)) {
                 result = "pass";
-            }else {
+            } else {
                 result = "failed";
             }
             List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最小边界-1");
@@ -228,16 +229,12 @@ public class TestFrame {
             List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "边界校验，最大边界+1");
             list.add(rowData);
         }
-        if (mustStr.equals("yes"))
-        {
+        if (mustStr.equals("yes")) {
             paramsJson.put(checkParam, "");
-            if (params.substring(0, 1).equals("{"))
-            {
+            if (params.substring(0, 1).equals("{")) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
-            }
-            else
-            {
+            } else {
                 paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
                 response = testApiByForm(url, method, headersJson, paramsJson);
                 saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
@@ -252,16 +249,12 @@ public class TestFrame {
 
             list.add(rowData);
         }
-        if (!minStr.equals(""))
-        {
+        if (!minStr.equals("")) {
             paramsJson.put(checkParam, minStr);
-            if (params.substring(0, 1).equals("{"))
-            {
+            if (params.substring(0, 1).equals("{")) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
-            }
-            else
-            {
+            } else {
                 paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams2(uniqueParams, paramsJson);
                 response = testApiByForm(url, method, headersJson, paramsJson);
                 saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
@@ -294,7 +287,115 @@ public class TestFrame {
         return rowData;
     }
 
-    public static void testSpecialCharacters(String excelPath, String sheetName) {
+    public static void testSpecialCharacters(String excelPath, String sheetName) throws IOException {
+        List<HashMap<String, String>> originData = CommonMethod.readExcelSheet(excelPath, sheetName);
+        for (HashMap<String, String> data : originData) {
+            String url = data.get("url");
+            String method = data.get("method");
+            String headers = data.get("headers");
+            String params = data.get("params");
+            String uniqueParam = data.get("uniqueParams");
+            String checkParam = data.get("checkParam");
+            String fieldType = data.get("fieldType");
+            String isNullable = data.get("isNullable");
+            String specialList = data.get("specialList");
+            String checkValue = data.get("checkValue");
+            String reportPath = data.get("reportPath");
+            String ifCheckSpecial = data.get("ifCheckSpecial");
 
+            testSpecialCharacters(url, method, headers, params, uniqueParam, checkParam, fieldType, isNullable, checkValue, specialList, reportPath, ifCheckSpecial);
+        }
+    }
+
+    private static void testSpecialCharacters(String url, String method, String headers, String params, String uniqueParam, String checkParam, String fieldType, String isNullable, String checkValue, String specialList, String reportPath, String ifCheckSpecial) throws IOException {
+        if ((Objects.equals("YES", ifCheckSpecial) || Objects.equals("yes", ifCheckSpecial)) && Objects.equals("字符串", fieldType)) {
+            testSpecialCharacters(url, method, headers, params, uniqueParam, checkParam, fieldType, isNullable, checkValue, specialList, reportPath);
+        }
+    }
+
+    private static void testSpecialCharacters(String url, String method, String headers, String params, String uniqueParam, String checkParam, String fieldType, String isNullable, String checkValue, String specialList, String reportPath) throws IOException {
+        String headersStr = StringOperateUtil.getJsonStr(headers);
+        String paramsStr = "";
+        if (params.substring(0, 1).equals("{")) {
+            paramsStr = params;
+        } else {
+            paramsStr = StringOperateUtil.getJsonStr(params);
+        }
+        JSONObject headersJson = new JSONObject(headersStr);
+        String otherSpecialStr = StringOperateUtil.getFilterStr(SPECIAL_STR, specialList);
+        String response = "";
+        String result = "";
+        String temp = "";
+        String saveParamStr = "";
+        List<List<String>> list = Lists.newArrayList();
+        if (!specialList.equals("")) {
+            for (int i = 0; i < specialList.length(); i++) {
+                String item = String.valueOf(specialList.charAt(i));
+                JSONObject paramsJson = new JSONObject(paramsStr);
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParam, paramsJson);
+                temp = paramsJson.getString(checkParam);
+
+                paramsJson.put(checkParam, temp + item);
+                if (params.substring(0, 1).equals("{")) {
+                    response = testApiByJson(url, method, headersJson, paramsJson);
+                    saveParamStr = paramsJson.toString();
+                } else {
+                    response = testApiByForm(url, method, headersJson, paramsJson);
+                    saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+                }
+                if (response.contains(checkValue)) {
+                    result = "pass";
+                } else {
+                    result = "failed";
+                }
+                List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "特殊字符校验" + item);
+                list.add(rowData);
+            }
+            for (int i = 0; i < otherSpecialStr.length(); i++) {
+                String item = String.valueOf(otherSpecialStr.charAt(i));
+                JSONObject paramsJson = new JSONObject(paramsStr);
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParam, paramsJson);
+                temp = paramsJson.getString(checkParam);
+                paramsJson.put(checkParam, temp + item);
+                if (params.substring(0, 1).equals("{")) {
+                    response = testApiByJson(url, method, headersJson, paramsJson);
+                    saveParamStr = paramsJson.toString();
+                } else {
+                    response = testApiByForm(url, method, headersJson, paramsJson);
+                    saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+                }
+                if (!response.contains(checkValue)) {
+                    result = "pass";
+                } else {
+                    result = "failed";
+                }
+                List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "特殊字符校验" + item);
+                list.add(rowData);
+            }
+        } else {
+            for (int i = 0; i < SPECIAL_STR.length(); i++) {
+                String item = String.valueOf(SPECIAL_STR.charAt(i));
+                JSONObject paramsJson = new JSONObject(paramsStr);
+                paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParam, paramsJson);
+                temp = paramsJson.getString(checkParam);
+                paramsJson.put(checkParam, temp + item);
+                if (params.substring(0, 1).equals("{")) {
+                    response = testApiByJson(url, method, headersJson, paramsJson);
+                    saveParamStr = paramsJson.toString();
+                } else {
+                    response = testApiByForm(url, method, headersJson, paramsJson);
+                    saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+                }
+                if (response.contains(checkValue)) {
+                    result = "pass";
+                } else {
+                    result = "failed";
+                }
+                List<String> rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result, checkParam + "特殊字符校验" + item);
+                list.add(rowData);
+            }
+        }
+        String header = "url, method, headers,params,checkParam,checkValue,response,result,testName";
+        CommonMethod.writeList(reportPath, "test-report", header, list);
     }
 }

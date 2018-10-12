@@ -84,4 +84,26 @@ public class StringOperateUtil {
         }
         return result.substring(0, result.length()-1);
     }
+
+    public static String getFilterStr(String specialStr, String specialList) {
+        for (int i = 0; i < specialList.length(); i++) {
+            char item = specialList.charAt(i);
+            String temp = String.valueOf(item);
+            specialStr = specialStr.replace(temp, "");
+        }
+        return specialStr;
+    }
+
+    public static JSONObject getChangeJsonFromUniqueParams(String uniqueParam, JSONObject paramsJson) {
+        String[] uniqueParamsList = uniqueParam.split("&");
+        if (!uniqueParam.equals("")) {
+            for (int i = 0; i < uniqueParamsList.length; i++) {
+                String key = uniqueParamsList[i];
+                String initial = paramsJson.getString(key);
+                String newStr = initial + getCurrentTime("mmssSSS");
+                paramsJson.put(key, newStr);
+            }
+        }
+        return paramsJson;
+    }
 }
