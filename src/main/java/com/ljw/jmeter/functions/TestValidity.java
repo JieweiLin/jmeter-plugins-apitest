@@ -13,41 +13,35 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author 林杰炜 linjiewei
- * @Title TODO 类描述
- * @Description TODO 详细描述
- * @date 2018/10/8 1:19
+ * @author 林杰炜 linjw
+ * @Title: 有效性测验
+ * @Description: 有效性测验
+ * @Copyright:
+ * @date: 2018/10/15 17:27
  */
-public class TestBoundary extends AbstractFunction {
-
+public class TestValidity extends AbstractFunction {
     private static final List<String> desc = Lists.newLinkedList();
-    private static final String KEY = "__testBoundary";
-    private CompoundVariable excelPath;
-    private CompoundVariable sheetName;
-
-    public TestBoundary(){}
-
-    @Override
-    public List<String> getArgumentDesc() {
-        return desc;
-    }
+    private static final String KEY = "__testValidity";
 
     static {
         desc.add("excelPath");
         desc.add("sheetName");
     }
 
+    private CompoundVariable excelPath;
+    private CompoundVariable sheetName;
 
     @Override
     public String execute(SampleResult sampleResult, Sampler sampler) throws InvalidVariableException {
-        String excelPathTrim = this.excelPath.execute().trim();
-        String sheetNameTrim = this.sheetName.execute().trim();
+        String excelPath = this.excelPath.execute().trim();
+        String sheetName = this.sheetName.execute().trim();
         try {
-            TestFrame.testBoundary(excelPathTrim, sheetNameTrim);
+            TestFrame.testValidity(excelPath, sheetName);
         } catch (IOException e) {
-            return "Boundary test failed";
+            e.printStackTrace();
+            return "Validity test failed";
         }
-        return "Boundary test succeeded";
+        return "Validity verification succeeded";
     }
 
     @Override
@@ -61,5 +55,10 @@ public class TestBoundary extends AbstractFunction {
     @Override
     public String getReferenceKey() {
         return KEY;
+    }
+
+    @Override
+    public List<String> getArgumentDesc() {
+        return desc;
     }
 }

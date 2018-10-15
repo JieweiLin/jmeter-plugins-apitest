@@ -19,6 +19,7 @@ public class StringOperateUtil {
     private static final String FAMILY_NAME = "";
     private static final String NAME = "";
     private static final String SEX = "";
+    private static String phone;
 
     public static String getLastValue(String text, String separator) {
         String[] texts = text.split(separator);
@@ -105,5 +106,26 @@ public class StringOperateUtil {
             }
         }
         return paramsJson;
+    }
+
+    public static String getPhone() {
+        String phone1 = getRandowStr("130,131,132,133,134,135,136,137,138,158,186,188,189", ",");
+
+        return phone1 + getRandow(10000000, 99999999);
+    }
+
+    private static int getRandow(int i, int i1) {
+        Random random = new Random();
+        if (i != 0) {
+            int s = random.nextInt(i1) % (i1 - i + 1) + i;
+            return s;
+        }
+        return random.nextInt(i1 + 1);
+    }
+
+    private static String getRandowStr(String s, String s1) {
+        String[] originalStr2 = s.split(s1);
+        int index = getRandow(0, originalStr2.length - 1);
+        return originalStr2[index];
     }
 }

@@ -398,4 +398,128 @@ public class TestFrame {
         String header = "url, method, headers,params,checkParam,checkValue,response,result,testName";
         CommonMethod.writeList(reportPath, "test-report", header, list);
     }
+
+    public static void testValidity(String excelPath, String sheetName) throws IOException {
+        List<HashMap<String, String>> originData = CommonMethod.readExcelSheet(excelPath, sheetName);
+        for (HashMap<String, String> data : originData) {
+            String url = (String) data.get("url");
+            String method = (String) data.get("method");
+            String headers = (String) data.get("headers");
+            String params = (String) data.get("params");
+            String uniqueParams = (String) data.get("uniqueParams");
+            String checkParam = (String) data.get("checkParam");
+            String fieldType = (String) data.get("fieldType");
+
+            String checkValue = (String) data.get("checkValue");
+            String reportPath = (String) data.get("reportPath");
+            String ifCheckValidity = (String) data.get("ifCheckValidity");
+            testValidity(url, method, headers, params, uniqueParams, checkParam, fieldType, checkValue, reportPath,
+                    ifCheckValidity);
+        }
+    }
+
+    private static void testValidity(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String checkValue, String reportPath, String ifCheckValidity) throws IOException {
+        if (ifCheckValidity.equals("YES")) {
+            testValidity(url, method, headers, params, uniqueParams, checkParam, fieldType, checkValue, reportPath);
+        }
+    }
+
+    private static void testValidity(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String checkValue, String reportPath) throws IOException {
+        List<List<String>> list = Lists.newArrayList();
+        if (fieldType.equals("手机号")) {
+            list.add(validityMobilePhone(url, method, headers, params, uniqueParams, checkParam, checkValue, "正"));
+            list.add(validityMobilePhone(url, method, headers, params, uniqueParams, checkParam, checkValue, "反"));
+        }
+        if (fieldType.equals("数字")) {
+            list.add(validityNum(url, method, headers, params, uniqueParams, checkParam, checkValue));
+        }
+        String header = "url, method, headers,params,checkParam,checkValue,response,result,testName";
+        CommonMethod.writeList(reportPath, "test-report", header, list);
+    }
+
+    private static List<String> validityNum(String url, String method, String headers, String params, String uniqueParams, String checkParam, String checkValue) throws IOException {
+        String headersStr = StringOperateUtil.getJsonStr(headers);
+        JSONObject headersJson = new JSONObject(headersStr);
+        String paramsStr = "";
+        if (params.substring(0, 1).equals("{")) {
+            paramsStr = params;
+        } else {
+            paramsStr = StringOperateUtil.getJsonStr(params);
+        }
+        JSONObject paramsJson = new JSONObject(paramsStr);
+        String response = "";
+        String saveParamStr = "";
+        String result = "";
+        List<String> rowData = null;
+        paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParams, paramsJson);
+
+        paramsJson.put(checkParam, "test");
+        if (params.substring(0, 1).equals("{")) {
+            response = testApiByJson(url, method, headersJson, paramsJson);
+            saveParamStr = paramsJson.toString();
+        } else {
+            response = testApiByForm(url, method, headersJson, paramsJson);
+            saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+        }
+        if (!response.contains(checkValue)) {
+            result = "pass";
+        } else {
+            result = "failed";
+        }
+        rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result,
+                checkParam + "数字有效性校验（反）");
+
+        return rowData;
+    }
+
+    private static List<String> validityMobilePhone(String url, String method, String headers, String params, String uniqueParams, String checkParam, String checkValue, String s) throws IOException {
+        String headersStr = StringOperateUtil.getJsonStr(headers);
+        JSONObject headersJson = new JSONObject(headersStr);
+        String paramsStr = "";
+        if (params.substring(0, 1).equals("{")) {
+            paramsStr = params;
+        } else {
+            paramsStr = StringOperateUtil.getJsonStr(params);
+        }
+        JSONObject paramsJson = new JSONObject(paramsStr);
+        String response = "";
+        String saveParamStr = "";
+        String result = "";
+        List<String> rowData = null;
+        paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParams, paramsJson);
+        if (s.equals("正")) {
+            paramsJson.put(checkParam, StringOperateUtil.getPhone());
+            if (params.substring(0, 1).equals("{")) {
+                response = testApiByJson(url, method, headersJson, paramsJson);
+                saveParamStr = paramsJson.toString();
+            } else {
+                response = testApiByForm(url, method, headersJson, paramsJson);
+                saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+            }
+            if (response.contains(checkValue)) {
+                result = "pass";
+            } else {
+                result = "failed";
+            }
+            rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result,
+                    checkParam + "手机有效性校验（正）");
+        } else {
+            paramsJson.put(checkParam, "11111111111");
+            if (params.substring(0, 1).equals("{")) {
+                response = testApiByJson(url, method, headersJson, paramsJson);
+                saveParamStr = paramsJson.toString();
+            } else {
+                response = testApiByForm(url, method, headersJson, paramsJson);
+                saveParamStr = StringOperateUtil.getStrFromJson(paramsJson.toString());
+            }
+            if (!response.contains(checkValue)) {
+                result = "pass";
+            } else {
+                result = "failed";
+            }
+            rowData = getRowData(url, method, headers, saveParamStr, checkParam, checkValue, response, result,
+                    checkParam + "手机号有效性校验（反）");
+        }
+        return rowData;
+    }
 }

@@ -34,9 +34,9 @@ public class TestSpecial extends AbstractFunction {
         try {
             TestFrame.testSpecialCharacters(excelPath, sheetName);
         } catch (Exception e){
-            return "特殊字符测试失败";
+            return "Special character test failed";
         }
-        return "特使字符测试成功";
+        return "Envoy character test succeeded";
     }
 
     @Override
