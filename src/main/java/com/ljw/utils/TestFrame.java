@@ -419,18 +419,18 @@ public class TestFrame {
     }
 
     private static void testValidity(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String checkValue, String reportPath, String ifCheckValidity) throws IOException {
-        if (ifCheckValidity.equals("YES")) {
+        if ("YES".equals(ifCheckValidity)) {
             testValidity(url, method, headers, params, uniqueParams, checkParam, fieldType, checkValue, reportPath);
         }
     }
 
     private static void testValidity(String url, String method, String headers, String params, String uniqueParams, String checkParam, String fieldType, String checkValue, String reportPath) throws IOException {
         List<List<String>> list = Lists.newArrayList();
-        if (fieldType.equals("手机号")) {
+        if ("手机号".equals(fieldType)) {
             list.add(validityMobilePhone(url, method, headers, params, uniqueParams, checkParam, checkValue, "正"));
             list.add(validityMobilePhone(url, method, headers, params, uniqueParams, checkParam, checkValue, "反"));
         }
-        if (fieldType.equals("数字")) {
+        if ("数字".equals(fieldType)) {
             list.add(validityNum(url, method, headers, params, uniqueParams, checkParam, checkValue));
         }
         String header = "url, method, headers,params,checkParam,checkValue,response,result,testName";
@@ -441,7 +441,7 @@ public class TestFrame {
         String headersStr = StringOperateUtil.getJsonStr(headers);
         JSONObject headersJson = new JSONObject(headersStr);
         String paramsStr = "";
-        if (params.substring(0, 1).equals("{")) {
+        if ("{".equals(params.substring(0, 1))) {
             paramsStr = params;
         } else {
             paramsStr = StringOperateUtil.getJsonStr(params);
@@ -454,7 +454,7 @@ public class TestFrame {
         paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParams, paramsJson);
 
         paramsJson.put(checkParam, "test");
-        if (params.substring(0, 1).equals("{")) {
+        if ("{".equals(params.substring(0, 1))) {
             response = testApiByJson(url, method, headersJson, paramsJson);
             saveParamStr = paramsJson.toString();
         } else {
@@ -476,7 +476,7 @@ public class TestFrame {
         String headersStr = StringOperateUtil.getJsonStr(headers);
         JSONObject headersJson = new JSONObject(headersStr);
         String paramsStr = "";
-        if (params.substring(0, 1).equals("{")) {
+        if ("{".equals(params.substring(0, 1))) {
             paramsStr = params;
         } else {
             paramsStr = StringOperateUtil.getJsonStr(params);
@@ -487,9 +487,9 @@ public class TestFrame {
         String result = "";
         List<String> rowData = null;
         paramsJson = StringOperateUtil.getChangeJsonFromUniqueParams(uniqueParams, paramsJson);
-        if (s.equals("正")) {
+        if ("正".equals(s)) {
             paramsJson.put(checkParam, StringOperateUtil.getPhone());
-            if (params.substring(0, 1).equals("{")) {
+            if ("{".equals(params.substring(0, 1))) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
             } else {
@@ -505,7 +505,7 @@ public class TestFrame {
                     checkParam + "手机有效性校验（正）");
         } else {
             paramsJson.put(checkParam, "11111111111");
-            if (params.substring(0, 1).equals("{")) {
+            if ("{".equals(params.substring(0, 1))) {
                 response = testApiByJson(url, method, headersJson, paramsJson);
                 saveParamStr = paramsJson.toString();
             } else {
